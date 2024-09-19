@@ -1,0 +1,179 @@
+Consider the below schema :
+
+1. Collection:
+   - `_id`: ObjectId
+   - `username`: String
+   - `email`: String
+   - `age`: Number
+   - `createdAt`: Date
+
+2. Posts Collection:
+   - `_id`: ObjectId
+   - `title`: String
+   - `content`: String
+   - `authorId`: ObjectId (Reference to Users Collection)
+   - `createdAt`: Date
+
+3. Comments Collection:
+   - `_id`: ObjectId
+   - `text`: String
+   - `postId`: ObjectId (Reference to Posts Collection)
+   - `userId`: ObjectId (Reference to Users Collection)
+   - `createdAt`: Date
+
+4. Likes Collection:
+   - `_id`: ObjectId
+   - `postId`: ObjectId (Reference to Posts Collection)
+   - `userId`: ObjectId (Reference to Users Collection)
+   - `createdAt`: Date
+
+5. Followers Collection:
+   - `_id`: ObjectId
+   - `followerId`: ObjectId (Reference to Users Collection)
+   - `followeeId`: ObjectId (Reference to Users Collection)
+   - `createdAt`: Date
+
+6. Tags Collection:
+   - `_id`: ObjectId
+   - `name`: String
+
+7. PostTags Collection:
+   - `_id`: ObjectId
+   - `postId`: ObjectId (Reference to Posts Collection)
+   - `tagId`: ObjectId (Reference to Tags Collection)
+   - `createdAt`: Date
+
+8. Views Collection:
+   - `_id`: ObjectId
+   - `postId`: ObjectId (Reference to Posts Collection)
+   - `userId`: ObjectId (Reference to Users Collection)
+   - `timestamp`: Date
+
+### Advanced MongoDB Aggregation Pipeline Questions:
+
+1. Question: Calculate the total number of posts, comments, likes, and views for each user, grouped by age range.
+"18-24"
+"25-34" 
+"35-44" 
+“45+"
+
+// Users Collection
+db.createCollection("users", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["username", "email", "age", "createdAt"],
+      properties: {
+        username: { bsonType: "string" },
+        email: { bsonType: "string" },
+        age: { bsonType: "number" },
+        createdAt: { bsonType: "date" }
+      }
+    }
+  }
+});
+
+// Posts Collection
+db.createCollection("posts", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["title", "content", "authorId", "createdAt"],
+      properties: {
+        title: { bsonType: "string" },
+        content: { bsonType: "string" },
+        authorId: { bsonType: "objectId" },
+        createdAt: { bsonType: "date" }
+      }
+    }
+  }
+});
+
+// Comments Collection
+db.createCollection("comments", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["text", "postId", "userId", "createdAt"],
+      properties: {
+        text: { bsonType: "string" },
+        postId: { bsonType: "objectId" },
+        userId: { bsonType: "objectId" },
+        createdAt: { bsonType: "date" }
+      }
+    }
+  }
+});
+
+// Likes Collection
+db.createCollection("likes", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["postId", "userId", "createdAt"],
+      properties: {
+        postId: { bsonType: "objectId" },
+        userId: { bsonType: "objectId" },
+        createdAt: { bsonType: "date" }
+      }
+    }
+  }
+});
+
+// Followers Collection
+db.createCollection("followers", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["followerId", "followeeId", "createdAt"],
+      properties: {
+        followerId: { bsonType: "objectId" },
+        followeeId: { bsonType: "objectId" },
+        createdAt: { bsonType: "date" }
+      }
+    }
+  }
+});
+
+// Tags Collection
+db.createCollection("tags", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["name"],
+      properties: {
+        name: { bsonType: "string" }
+      }
+    }
+  }
+});
+
+// PostTags Collection
+db.createCollection("postTags", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["postId", "tagId", "createdAt"],
+      properties: {
+        postId: { bsonType: "objectId" },
+        tagId: { bsonType: "objectId" },
+        createdAt: { bsonType: "date" }
+      }
+    }
+  }
+});
+
+// Views Collection
+db.createCollection("views", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["postId", "userId", "timestamp"],
+      properties: {
+        postId: { bsonType: "objectId" },
+        userId: { bsonType: "objectId" },
+        timestamp: { bsonType: "date" }
+      }
+    }
+  }
+});

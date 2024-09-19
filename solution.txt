@@ -1,0 +1,82 @@
+db.users.aggregate([
+  // Add age group to users
+  {
+    $addFields: {
+      ageGroup: {
+        $switch: {
+          branches: [
+            { case: { $and: [ { $gte: ["$age", 18] }, { $lte: ["$age", 24] } ] }, then: "18-24" },
+            { case: { $and: [ { $gte: ["$age", 25] }, { $lte: ["$age", 34] } ] }, then: "25-34" },
+            { case: { $and: [ { $gte: ["$age", 35] }, { $lte: ["$age", 44] } ] }, then: "35-44" },
+            { case: { $gte: ["$age", 45] }, then: "45+" }
+          ],
+          default: "Unknown"
+        }
+      }
+    }
+  },
+
+
+  
+  // Lookup posts by userId
+  {
+    $lookup: {
+      from: "posts",
+      localField: "_id",
+      foreignField: "authorId",
+      as: "userPosts"
+    }
+  },
+  
+  // Lookup comments by userId
+  {
+    $lookup: {
+      from: "comments",
+      localField: "_id",
+      foreignField: "userId",
+      as: "userComments"
+    }
+  },
+  
+  // Lookup likes by userId
+  {
+    $lookup: {
+      from: "likes",
+      localField: "_id",
+      foreignField: "userId",
+      as: "userLikes"
+    }
+  },
+  
+  //  Lookup views by userId
+  {
+    $lookup: {
+      from: "views",
+      localField: "_id",
+      foreignField: "userId",
+      as: "userViews"
+    }
+  },
+  
+
+
+
+  //  Project to calculate the totals for each user
+  {
+    $project: {
+      _id: 1,
+      username: 1,
+      ageGroup: 1,
+      totalPosts: { $size: "$userPosts" },
+      totalComments: { $size: "$userComments" },
+      totalLikes: { $size: "$userLikes" },
+      totalViews: { $size: "$userViews" }
+    }
+  },
+
+
+  //  Sorting by age
+  {
+    $sort: { ageGroup: 1 }
+  }
+])
